@@ -1,0 +1,20 @@
+#canvas {
+  width: 500px;
+  height: 500px;
+}
+
+.snake {
+  width: 30px;
+  position: fixed;
+  height: 30px;
+  background-color:red;
+}
+
+.food {
+  width: 30px;
+  height: 30px;
+  position:fixed;
+  background-color:blue;
+}
+
+
