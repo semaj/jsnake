@@ -43,23 +43,19 @@ SNAKE.prototype.death = function() {
 }
   
 SNAKE.prototype.moveLeft = function() {
-  this.x = ($(window).width() + this.x - this.speed) % $(window).width();
-  console.log("moving left");
+  this.x = this.x - this.speed;
 }
 
 SNAKE.prototype.moveRight = function() {
-  this.x = (this.x + this.speed) % $(window).width();
-  console.log("moving right");
+  this.x = this.x + this.speed;
 }
 
 SNAKE.prototype.moveUp = function() {
-  this.y = (this.y + this.speed) % $(window).height();
-  console.log("moving up");
+  this.y = this.y + this.speed;
 }
 
 SNAKE.prototype.moveDown = function() {
-  this.y = ($(window).height() + this.y - this.speed) % $(window).height();
-  console.log("moving down");
+  this.y = this.y - this.speed;
 }
 
 SNAKE.prototype.addSnake = function() {
@@ -69,12 +65,12 @@ SNAKE.prototype.addSnake = function() {
     the = thenext;
     thenext = thenext.next;
   }
-  the.next = new SNAKE(the.x, the.y, function(){console.log("fancy")}, the.speed);
+  the.next = new SNAKE(the.x, the.y, function(){}, the.speed);
 }
 
 var snake = new SNAKE(0, 0, SNAKE.prototype.moveRight, SPEED);
 var new_movement = SNAKE.prototype.moveRight;
-var food = new FOOD(50,50);
+var food = new FOOD(30,30);
 
 $('body').keydown(function(event) {
   if (event.keyCode == 37) new_movement = SNAKE.prototype.moveLeft;
@@ -96,25 +92,34 @@ function stop_when(goal) {
 }
 
 function draw() {
-  var the = snake;
-  console.log("drawing x" + the.x + " y" + the.y);
+  var the = jQuery.extend(true, {}, snake);
+  var window_height = $(window).height() - ($(window).height() % HEIGHT);
+  var window_width = $(window).width() - ($(window).width() % WIDTH); 
+  the.x = window_width + the.x;
+  the.y = window_height + the.y;
   $('body').html('');
   while (the != undefined) {
     $('body').append(
-        $('<div style="bottom: ' + the.y + 'px; left: ' + the.x + 'px;"></div>')
+        $('<div style="bottom: ' + the.y % window_height + 'px; left: ' + the.x % window_width + 'px;"></div>')
           .addClass("snake")
     );
     the = the.next;
   }
   $('body').append(
-      $('<div style="bottom: ' + food.y + 'px; left: ' + food.x + 'px;"></div>')
+      $('<div style="bottom: ' + food.y % window_height + 'px; left: ' + food.x % window_width + 'px;"></div>')
         .addClass("food")
   );
 }
 
 function move() {
-  if ((snake.x < food.x + WIDTH) && (snake.x + WIDTH >= food.x) &&
-      (snake.y < food.y + HEIGHT) && (snake.y + HEIGHT > food.y)) {
+  var window_height = $(window).height() - ($(window).height() % HEIGHT);
+  var window_width = $(window).width() - ($(window).width() % WIDTH); 
+  var snakex = snake.x % window_width;
+  var snakey = snake.y % window_height;
+  var foodx = food.x % window_width;
+  var foody = food.y % window_height;
+  if ((snakex < foodx + WIDTH) && (snakex + WIDTH > foodx) &&
+      (snakey < foody + HEIGHT) && (snakey + HEIGHT > foody)) {
     snake.addSnake();
     food.move();
   }
