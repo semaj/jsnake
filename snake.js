@@ -15,8 +15,8 @@ function FOOD(x, y) {
 };
 
 FOOD.prototype.move = function() {
-  this.x = Math.floor(Math.random() * 11) * WIDTH;
-  this.y = Math.floor(Math.random() * 11) * HEIGHT;
+  this.x = Math.floor(Math.random() * 1100) * WIDTH;
+  this.y = Math.floor(Math.random() * 1100) * HEIGHT;
 };
 
 SNAKE.prototype.length = function() {
@@ -92,19 +92,27 @@ function stop_when(goal) {
 }
 
 function draw() {
-  var the = jQuery.extend(true, {}, snake);
   var window_height = $(window).height() - ($(window).height() % HEIGHT);
   var window_width = $(window).width() - ($(window).width() % WIDTH); 
-  the.x = window_width + the.x;
-  the.y = window_height + the.y;
+  var the = snake;
   $('body').html('');
   while (the != undefined) {
+    if (the.x < 0) {
+      the.x = window_width + the.x; 
+    }
+    if (the.y < 0) {
+      the.y = window_height + the.y;
+    }
+    the.x = the.x % window_width;
+    the.y = the.y % window_height;
     $('body').append(
-        $('<div style="bottom: ' + the.y % window_height + 'px; left: ' + the.x % window_width + 'px;"></div>')
+        $('<div style="bottom: ' + the.y + 'px; left: ' + the.x + 'px;"></div>')
           .addClass("snake")
     );
     the = the.next;
   }
+  food.x = food.x % window_width;
+  food.y = food.y % window_height;
   $('body').append(
       $('<div style="bottom: ' + food.y % window_height + 'px; left: ' + food.x % window_width + 'px;"></div>')
         .addClass("food")
